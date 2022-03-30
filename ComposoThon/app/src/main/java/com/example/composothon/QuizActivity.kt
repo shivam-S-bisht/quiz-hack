@@ -31,6 +31,8 @@ import com.airbnb.lottie.compose.*
 import com.example.composothon.ui.theme.ComposoThonTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.util.*
+
 class QuizActivity : ComponentActivity() {
     private val questionStateModel: QuestionStateModel by viewModels();
 
@@ -51,9 +53,9 @@ class QuizActivity : ComponentActivity() {
                         painterResource(id = R.drawable.nucleus))
                 ),
                 mapOf(
-                    "squad" to "Momentum",
-                    "name" to "Abhilash",
-                    "image" to painterResource(id = R.drawable.abhilash) ,
+                    "squad" to "Photon",
+                    "name" to "Manish",
+                    "image" to painterResource(id = R.drawable.manish) ,
                     "options" to listOf("Photon", "Momentum", "Sigma","Nucleus"),
                     "logos" to listOf(
                         painterResource(id = R.drawable.photon) ,
@@ -73,8 +75,45 @@ class QuizActivity : ComponentActivity() {
                         painterResource(id = R.drawable.momentum),
                         painterResource(id = R.drawable.nucleus)
                     )
+                ),
+                mapOf(
+                    "squad" to "Momentum",
+                    "name" to "Utkarsh",
+                    "image" to painterResource(id =  R.drawable.utkarsh),
+                    "options" to listOf("Nucleus", "Photon", "Momentum","Sigma"),
+                    "logos" to listOf(
+                        painterResource(id = R.drawable.nucleus) ,
+                        painterResource(id = R.drawable.photon),
+                        painterResource(id = R.drawable.momentum),
+                        painterResource(id = R.drawable.sigma)
+                    )
+                ),
+                mapOf(
+                    "squad" to "Qubit",
+                    "name" to "Mayur",
+                    "image" to painterResource(id =  R.drawable.mayur),
+                    "options" to listOf("Nucleus", "Qubit", "Momentum","Sigma"),
+                    "logos" to listOf(
+                        painterResource(id = R.drawable.nucleus) ,
+                        painterResource(id = R.drawable.qubit),
+                        painterResource(id = R.drawable.momentum),
+                        painterResource(id = R.drawable.sigma)
+                    )
+                ),
+                mapOf(
+                    "squad" to "None",
+                    "name" to "Abhilash",
+                    "image" to painterResource(id =  R.drawable.abhilash),
+                    "options" to listOf("Nucleus", "Photon", "Momentum","None"),
+                    "logos" to listOf(
+                        painterResource(id = R.drawable.nucleus) ,
+                        painterResource(id = R.drawable.photon),
+                        painterResource(id = R.drawable.momentum),
+                        painterResource(id = R.drawable.ic_launcher_background)
+                    )
                 )
-            )
+            ).toMutableList()
+            val shuffAlp = objOfSquad.shuffled()
             ComposoThonTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -85,15 +124,15 @@ class QuizActivity : ComponentActivity() {
                     var scoreState = remember {
                         mutableStateOf(0)
                     }
-                    if(quesState.value < 3){
+                    if(quesState.value < shuffAlp.count()){
                         QuestionPoint(
                             Question(
                                 type = "names",
-                                answer= objOfSquad[quesState.value]["squad"].toString(),
-                                options = objOfSquad[quesState.value]["options"] as List<String>,
-                                squadLogos = objOfSquad[quesState.value]["logos"] as List<Painter>,
-                                logoImage = objOfSquad[quesState.value]["image"]  as Painter,
-                                name = objOfSquad[quesState.value]["name"] as String
+                                answer= shuffAlp[quesState.value]["squad"].toString(),
+                                options = shuffAlp[quesState.value]["options"] as List<String>,
+                                squadLogos = shuffAlp[quesState.value]["logos"] as List<Painter>,
+                                logoImage = shuffAlp[quesState.value]["image"]  as Painter,
+                                name = shuffAlp[quesState.value]["name"] as String
                                 ), state = "", questionStateModel){
                             if(it){
                                 scoreState.value +=10
@@ -103,6 +142,7 @@ class QuizActivity : ComponentActivity() {
                         val context = LocalContext.current
                             context.startActivity(Intent(context, ResultsActivity::class.java).apply {
                                 putExtra("score","${scoreState.value}")
+                                putExtra("total","${shuffAlp.count()*10}")
                             })
                     }
                 }

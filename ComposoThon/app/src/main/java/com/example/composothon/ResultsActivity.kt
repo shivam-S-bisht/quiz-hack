@@ -31,6 +31,7 @@ class ResultsActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val people = intent.getSerializableExtra("score")
+            val total = intent.getSerializableExtra("total")
             ComposoThonTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -45,7 +46,7 @@ class ResultsActivity : ComponentActivity() {
                     ){
                         Column {
                             ResultsGreeting(name = "10points")
-                            Text(text = "Score:  $people / 30",
+                            Text(text = "Score:  $people / $total",
                                 color = Color.White,
 
                                 fontSize = 40.sp,
