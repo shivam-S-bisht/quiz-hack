@@ -2,6 +2,7 @@ package com.example.composothon
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -27,7 +28,6 @@ import com.airbnb.lottie.compose.*
 import com.example.composothon.ui.theme.ComposoThonTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-
 class QuizActivity : ComponentActivity() {
     private val questionStateModel: QuestionStateModel by viewModels();
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,16 +46,22 @@ class QuizActivity : ComponentActivity() {
                         listOf<String>("Sigma", "Photon", "Momentum", "Nucleus","Momentum"))
 
                     val options = listOf<String>("Momentum", "Photon", "Sigma", "Nucleus")
-
                     var quesState = questionStateModel.state.collectAsState()
-
+                    var scoreState = remember {
+                        mutableStateOf(0)
+                    }
                     if(quesState.value < 3){
-                        QuestionPoint(Question(type = "names", abc[quesState.value].last(), options = abc[quesState.value]), state = "", questionStateModel)
+                        QuestionPoint(Question(type = "names", abc[quesState.value].last(), options = abc[quesState.value]), state = "", questionStateModel){
+                            if(it){
+                                scoreState.value +=10
+                            }
+                        }
                     } else{
                         val context = LocalContext.current
-                        context.startActivity(Intent(context, ResultsActivity::class.java))
+                            context.startActivity(Intent(context, ResultsActivity::class.java).apply {
+                                putExtra("score","${scoreState.value}")
+                            })
                     }
-
                 }
             }
         }
@@ -94,7 +100,7 @@ fun LogoDesign(painter:Painter){
 }
 
 @Composable
-fun QuestionPoint(question: Question, state: String, questionState: QuestionStateModel){
+fun QuestionPoint(question: Question, state: String, questionState: QuestionStateModel,callBack: (Boolean) -> Unit){
     val listOfDP = listOf(
         painterResource(id = R.drawable.vaibhav),
         painterResource(id = R.drawable.abhilash),
@@ -118,15 +124,19 @@ fun QuestionPoint(question: Question, state: String, questionState: QuestionStat
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar(
                             message = "correct",)
+                        callBack(true)
                     }
                 } else{
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar(
                             message = "wrong",)
                     }
+                    callBack(false)
                 }
 
-                questionState.state.value += 1
+                Handler().postDelayed({
+                    questionState.state.value += 1
+                },5000)
             }
         }
     }
@@ -194,7 +204,7 @@ fun CardHOC(text: String, flag: Boolean, answer: String, image:Painter,questionS
                 if (text == answer) {
                     callBack(true)
                 } else {
-                callBack(false)
+                    callBack(false)
                 }
             }
         },

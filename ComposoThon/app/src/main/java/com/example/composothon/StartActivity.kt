@@ -85,24 +85,33 @@ fun PlayLottieStart(spec:LottieCompositionSpec){
 @Composable
 fun StartButton(flag: Boolean, callback:(Boolean)->Unit){
     val context = LocalContext.current
-
+Box(
+    contentAlignment = Alignment.BottomCenter,
+    modifier = Modifier
+        .fillMaxSize()
+        .paddingFromBaseline(bottom = 40.dp)
+){
     Card(modifier = Modifier
         .background(Color.Black)
-        .padding(10.dp)
         .fillMaxWidth()
+        .height(40.dp)
         .clickable(enabled = !flag) {
             callback(true)
-        },
-        shape = RoundedCornerShape(20.dp)
+        }
+        .padding(horizontal = 40.dp),
+        shape = RoundedCornerShape(20.dp),
+        backgroundColor = Color.Yellow,
     ){
-            Text(
-                text = "Start Quiz",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                modifier = Modifier
-                    .padding(vertical = 24.dp,horizontal = 10.dp)
-            )
+        Text(
+            text = "Start Quiz",
+            fontSize = 25.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            textAlign = TextAlign.Center
+
+        )
     }
+}
+
 }
 

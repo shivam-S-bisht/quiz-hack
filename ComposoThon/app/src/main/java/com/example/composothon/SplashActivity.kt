@@ -41,7 +41,8 @@ class SplashActivity : ComponentActivity(){
                 ) {
                     Box(modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black)
+                        .background(Color.Black),
+                        contentAlignment = Alignment.Center
                     ){
                         PlayLottieSplash(LottieCompositionSpec.RawRes(R.raw.splash))
                     }

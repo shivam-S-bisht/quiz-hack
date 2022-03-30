@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -16,6 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.*
 import com.example.composothon.ui.theme.ComposoThonTheme
 
@@ -23,6 +27,7 @@ class ResultsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val people = intent.getSerializableExtra("score")
             ComposoThonTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -35,7 +40,16 @@ class ResultsActivity : ComponentActivity() {
                         .background(Color.Black),
                         contentAlignment = Alignment.Center
                     ){
-                        ResultsGreeting(name = "10points")
+                        Column {
+                            ResultsGreeting(name = "10points")
+                            Text(text = "Score:  $people / 30",
+                                color = Color.White,
+
+                                fontSize = 40.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.paddingFromBaseline(top = 30.dp)
+                            )
+                        }
                     }
                 }
             }
