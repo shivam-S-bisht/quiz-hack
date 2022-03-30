@@ -1,6 +1,8 @@
 package com.example.composothon
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -18,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,6 +40,9 @@ class QuizActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    val successState = remember {
+                        mutableStateOf(false)
+                    }
                     val teams = listOf<String>("Momentum", "Photon", "Sigma", "Nucleus")
                     val answer = "Sigma";
                     val painter = painterResource(id = R.drawable.vaibhav)
@@ -44,12 +50,16 @@ class QuizActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(Color.Black)
                     ){
-                        Column {
-                            LogoDesign(painter = painter )
-                            CardPoint(answer, teams){
-
-                            }
-                        }
+                       if(!successState.value){
+                           Column {
+                               LogoDesign(painter = painter )
+                               CardPoint(answer, teams){
+                                   successState.value = true
+                               }
+                           }
+                       } else {
+                           PlayLottie()
+                       }
                     }
                 }
             }
@@ -124,6 +134,7 @@ fun CardHOC(text: String, flag: Boolean, answer: String,image:Painter ,event:(Bo
                 } else {
                     checkAnsState.value = Color.Red
                 }
+                event(true)
             }
         },
         backgroundColor = checkAnsState.value,
@@ -161,5 +172,14 @@ fun CardHOC(text: String, flag: Boolean, answer: String,image:Painter ,event:(Bo
 fun PlayLottie(){
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.correct))
     val progress by animateLottieCompositionAsState(composition)
+    val compositionResult: LottieCompositionResult = rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.correct))
     LottieAnimation(composition = composition, progress = progress)
+    var x = compositionResult
+    if(compositionResult.isComplete){
+        val context = LocalContext.current
+        context.startActivity(Intent(context, MainActivity::class.java))
+        Log.i("csknsdnf","ksmfknsf")
+        return
+    } else if(compositionResult.isFailure){
+    }
 }
