@@ -38,102 +38,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    val teams = listOf<String>("1", "2", "3", "4")
-                    val answer = "1";
-                    val painter = painterResource(id = R.drawable.vaibhav)
-                    Box(modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black)
-                    ){
-                        Column {
-                            LogoDesign(painter = painter )
-                            CardPoint(answer, teams){
-
-                            }
-                        }
-                    }
+                    val context = LocalContext.current
+                    context.startActivity(Intent(context, QuizActivity::class.java))
                 }
             }
         }
-    }
-}
-
-@Composable
-fun LogoDesign(painter:Painter){
-    Card(
-        shape = RoundedCornerShape(100.dp),
-        elevation = 5.dp,
-        modifier = Modifier.padding(100.dp)
-        ){
-    Image(painter = painter, contentDescription = "xyc" ,modifier = Modifier
-        .height(200.dp)
-        .width(200.dp)
-    )
-}
-}
-
-@Composable
-fun successDesign(painter:Painter){
-    Card(
-        shape = RoundedCornerShape(100.dp),
-        elevation = 5.dp,
-        modifier = Modifier.padding(100.dp)
-    ){
-        Image(painter = painter, contentDescription = "xyc" ,modifier = Modifier
-            .height(200.dp)
-            .width(200.dp)
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun CardPoint(answer: String, teams: List<String>, correct:(Boolean)->Unit){
-    val value = remember {
-        mutableStateOf(value = false)
-    }
-    LazyColumn{
-        items(count = teams.count()){ item->
-            Row(horizontalArrangement = Arrangement.Center) {
-                CardHOC(teams[item],value = value.value, answer){
-                    value.value = it
-                    correct(it)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun CardHOC(text: String, value: Boolean, answer: String, event:(Boolean)->Unit) {
-    val checkAnsState = remember {
-        mutableStateOf(value = Color.White)
-    }
-    Card(modifier = Modifier
-        .background(Color.Black)
-        .padding(10.dp)
-        .clickable(enabled = !value) {
-//            selectedItem(text)
-            if (!value) {
-                if(text == answer){
-                    checkAnsState.value = Color.Green
-                } else {
-                    checkAnsState.value = Color.Red
-                }
-                event(true)
-            }
-        },
-        backgroundColor = checkAnsState.value
-    ){
-        Text(
-            text = text,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .padding(vertical = 24.dp)
-                .fillMaxWidth()
-        )
     }
 }
