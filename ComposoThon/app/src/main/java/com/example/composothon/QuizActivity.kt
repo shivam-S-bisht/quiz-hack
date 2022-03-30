@@ -162,7 +162,6 @@ data class Question(
 
 data class QuestionState(
     var state: Int
-
 )
 
 class QuestionStateModel : ViewModel() {
@@ -285,21 +284,4 @@ fun CardHOC(text: String, flag: Boolean, answer: String, image:Painter,questionS
             )
         }
     }
-}
-
-@Composable
-fun PlayLottie(spec:LottieCompositionSpec, questionState: QuestionStateModel, event:()->Unit){
-    val composition by rememberLottieComposition(spec)
-    val progress by animateLottieCompositionAsState(composition)
-    val compositionResult: LottieCompositionResult = rememberLottieComposition(spec = spec)
-    LottieAnimation(
-        composition = composition,
-        progress = progress)
-    var x = compositionResult
-    if(compositionResult.isComplete){
-        event();
-        questionState.state.value += 1;
-        return
-    }
-    event();
 }
