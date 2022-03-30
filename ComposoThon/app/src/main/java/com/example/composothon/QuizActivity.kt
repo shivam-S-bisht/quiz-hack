@@ -2,7 +2,6 @@ package com.example.composothon
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -12,10 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,10 +19,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.*
 import com.example.composothon.ui.theme.ComposoThonTheme
 
@@ -67,6 +61,11 @@ class QuizActivity : ComponentActivity() {
         }
     }
 }
+
+data class AnswerValue(
+    var event: Boolean,
+    var correct: Boolean,
+)
 
 @Composable
 fun LogoDesign(painter:Painter){
@@ -110,15 +109,15 @@ fun CardPoint(answer: String, teams: List<String>, correct:(Boolean)->Unit){
     LazyColumn{
         items(count = teams.count()){ item->
             CardHOC(teams[item],flag = flag.value, answer,image = list[item]){
-                flag.value = it
-                correct(it)
+                flag.value = it.event
+                correct(it.correct)
                 }
         }
     }
 }
 
 @Composable
-fun CardHOC(text: String, flag: Boolean, answer: String,image:Painter ,event:(Boolean)->Unit) {
+fun CardHOC(text: String, flag: Boolean, answer: String,image:Painter, event:(AnswerValue)->Unit) {
     val checkAnsState = remember {
         mutableStateOf(value = Color.White)
     }
@@ -131,11 +130,11 @@ fun CardHOC(text: String, flag: Boolean, answer: String,image:Painter ,event:(Bo
             if (!flag) {
                 if (text == answer) {
                     checkAnsState.value = Color.Green
-
+                    event(AnswerValue(event = true, correct = true))
                 } else {
                     checkAnsState.value = Color.Red
+                    event(AnswerValue(event = true, correct = false))
                 }
-                event(true)
             }
         },
         backgroundColor = checkAnsState.value,
