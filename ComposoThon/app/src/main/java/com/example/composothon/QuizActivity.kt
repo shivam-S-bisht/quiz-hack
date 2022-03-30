@@ -34,29 +34,10 @@ class QuizActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    val successState = remember {
-                        mutableStateOf("")
-                    }
-                    val teams = listOf<String>("Momentum", "Photon", "Sigma", "Nucleus")
-                    val answer = "Sigma";
-                    val painter = painterResource(id = R.drawable.vaibhav)
-                    Box(modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black)
-                    ){
 
-                           Column {
-                               LogoDesign(painter = painter )
-                               CardPoint(answer, teams){
-                                   successState.value = it
-                               }
-                           }
-                       if(successState.value == "true"){
-                           PlayLottie(LottieCompositionSpec.RawRes(R.raw.correct))
-                       } else if (successState.value == "false"){
-                           PlayLottie(LottieCompositionSpec.RawRes(R.raw.wrong))
-                       }
-                    }
+                    val options = listOf<String>("Momentum", "Photon", "Sigma", "Nucleus")
+                    val answer = "Sigma";
+                    QuestionPoint(Question(type = "names", answer, options))
                 }
             }
         }
@@ -67,6 +48,13 @@ data class AnswerValue(
     var event: Boolean,
     var correct: Boolean,
 )
+
+data class Question(
+    var type: String,
+    var answer: String,
+    var options: List<String>,
+)
+
 
 @Composable
 fun LogoDesign(painter:Painter){
@@ -83,22 +71,32 @@ fun LogoDesign(painter:Painter){
 }
 
 @Composable
-fun successDesign(painter: Painter){
-    Card(
-        shape = RoundedCornerShape(100.dp),
-        elevation = 5.dp,
-        modifier = Modifier.padding(100.dp)
+fun QuestionPoint(question: Question){
+    val successState = remember {
+        mutableStateOf("")
+    }
+    val painter = painterResource(id = R.drawable.vaibhav)
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.Black)
     ){
-        Image(painter = painter, contentDescription = "xyc" ,modifier = Modifier
-            .height(200.dp)
-            .width(200.dp)
-        )
+        Column {
+            LogoDesign(painter = painter )
+            CardPoint(question.answer, question.options){
+                successState.value = it
+            }
+        }
+        if(successState.value == "true"){
+            PlayLottie(LottieCompositionSpec.RawRes(R.raw.correct))
+        } else if (successState.value == "false"){
+            PlayLottie(LottieCompositionSpec.RawRes(R.raw.wrong))
+        }
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CardPoint(answer: String, teams: List<String>, correct:(String)->Unit){
+fun CardPoint(answer: String, options: List<String>, correct:(String)->Unit){
     val flag = remember {
         mutableStateOf(value = false)
     }
@@ -108,8 +106,8 @@ fun CardPoint(answer: String, teams: List<String>, correct:(String)->Unit){
         painterResource(id = R.drawable.sigma),
         painterResource(id = R.drawable.nucleus))
     LazyColumn{
-        items(count = teams.count()){ item->
-            CardHOC(teams[item],flag = flag.value, answer,image = list[item]){
+        items(count = options.count()){ item->
+            CardHOC(options[item],flag = flag.value, answer,image = list[item]){
                 flag.value = it.event
                 correct(it.correct.toString())
                 }
