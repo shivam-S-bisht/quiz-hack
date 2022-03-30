@@ -38,6 +38,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    val teams = listOf<String>("1", "2", "3", "4")
+                    val answer = "1";
                     val painter = painterResource(id = R.drawable.vaibhav)
                     Box(modifier = Modifier
                         .fillMaxSize()
@@ -45,9 +47,9 @@ class MainActivity : ComponentActivity() {
                     ){
                         Column {
                             LogoDesign(painter = painter )
-                            CardPoint({
-                                Log.i("$it","$it")
-                            })
+                            CardPoint(answer, teams){
+
+                            }
                         }
                     }
                 }
@@ -70,36 +72,40 @@ fun LogoDesign(painter:Painter){
 }
 }
 
+@Composable
+fun successDesign(painter:Painter){
+    Card(
+        shape = RoundedCornerShape(100.dp),
+        elevation = 5.dp,
+        modifier = Modifier.padding(100.dp)
+    ){
+        Image(painter = painter, contentDescription = "xyc" ,modifier = Modifier
+            .height(200.dp)
+            .width(200.dp)
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CardPoint(selectedItem:(String)->Unit){
-//    val list = listOf(
-//        painterResource(id = R.drawable.momentum),
-//        painterResource(id = R.drawable.momentum),
-//        painterResource(id = R.drawable.momentum),
-//        painterResource(id = R.drawable.momentum))
-
-    val arr = listOf("Momentum","Photon","Sigma","Nucleus")
+fun CardPoint(answer: String, teams: List<String>, correct:(Boolean)->Unit){
     val value = remember {
         mutableStateOf(value = false)
     }
     LazyColumn{
-        items(count = arr.count()){ item->
+        items(count = teams.count()){ item->
             Row(horizontalArrangement = Arrangement.Center) {
-                CardHOC(arr[item],value = value.value){
+                CardHOC(teams[item],value = value.value, answer){
                     value.value = it
+                    correct(it)
                 }
             }
         }
     }
 }
-@Composable
-fun Greeting(s: String,) {
-//    Text(text = "Hello $name!")
-}
 
 @Composable
-fun CardHOC(text: String, value: Boolean, event:(Boolean)->Unit) {
+fun CardHOC(text: String, value: Boolean, answer: String, event:(Boolean)->Unit) {
     val checkAnsState = remember {
         mutableStateOf(value = Color.White)
     }
@@ -108,19 +114,15 @@ fun CardHOC(text: String, value: Boolean, event:(Boolean)->Unit) {
         .padding(10.dp)
         .clickable(enabled = !value) {
 //            selectedItem(text)
-
             if (!value) {
-                if(text == "Sigma"){
+                if(text == answer){
                     checkAnsState.value = Color.Green
-                } else{
+                } else {
                     checkAnsState.value = Color.Red
                 }
                 event(true)
             }
         },
-
-
-
         backgroundColor = checkAnsState.value
     ){
         Text(
@@ -133,13 +135,5 @@ fun CardHOC(text: String, value: Boolean, event:(Boolean)->Unit) {
                 .padding(vertical = 24.dp)
                 .fillMaxWidth()
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    ComposoThonTheme {
-        Greeting("Name")
     }
 }
