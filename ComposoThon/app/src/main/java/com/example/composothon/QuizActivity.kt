@@ -41,17 +41,16 @@ class QuizActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val abc = listOf(
-                        listOf<String>("Momentum", "Photon", "Sigma", "Nucleus"),
-                        listOf<String>("Photon", "Momentum", "Sigma", "Nucleus"),
-                        listOf<String>("Sigma", "Photon", "Momentum", "Nucleus"))
+                        listOf<String>("Momentum", "Photon", "Sigma", "Nucleus","Sigma"),
+                        listOf<String>("Photon", "Momentum", "Sigma", "Nucleus","Photon"),
+                        listOf<String>("Sigma", "Photon", "Momentum", "Nucleus","Momentum"))
 
                     val options = listOf<String>("Momentum", "Photon", "Sigma", "Nucleus")
-                    val answer = "Sigma";
 
                     var quesState = questionStateModel.state.collectAsState()
 
                     if(quesState.value < 3){
-                        QuestionPoint(Question(type = "names", answer, options = abc[quesState.value]), state = "", questionStateModel)
+                        QuestionPoint(Question(type = "names", abc[quesState.value].last(), options = abc[quesState.value]), state = "", questionStateModel)
                     } else{
                         val context = LocalContext.current
                         context.startActivity(Intent(context, ResultsActivity::class.java))
@@ -96,6 +95,11 @@ fun LogoDesign(painter:Painter){
 
 @Composable
 fun QuestionPoint(question: Question, state: String, questionState: QuestionStateModel){
+    val listOfDP = listOf(
+        painterResource(id = R.drawable.vaibhav),
+        painterResource(id = R.drawable.abhilash),
+        painterResource(id = R.drawable.shivam),
+    )
     val painter = painterResource(id = R.drawable.vaibhav)
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
@@ -108,7 +112,7 @@ fun QuestionPoint(question: Question, state: String, questionState: QuestionStat
             scaffoldState = scaffoldState
         ) {
         Column(modifier = Modifier.background(Color.Black)) {
-            LogoDesign(painter = painter)
+            LogoDesign(painter = listOfDP[questionState.state.value])
             CardPoint(question.answer, question.options, questionState) {
                 if(it){
                     scope.launch {
@@ -145,6 +149,23 @@ fun CardPoint(answer: String, options: List<String>,questionState:QuestionStateM
     val flag = remember {
         mutableStateOf(value = false)
     }
+    val liatnew = listOf(
+        listOf(
+            painterResource(id = R.drawable.momentum),
+            painterResource(id = R.drawable.photon),
+            painterResource(id = R.drawable.sigma),
+            painterResource(id = R.drawable.nucleus)),
+        listOf(
+            painterResource(id = R.drawable.photon),
+            painterResource(id = R.drawable.momentum),
+            painterResource(id = R.drawable.sigma),
+            painterResource(id = R.drawable.nucleus)),
+        listOf(
+            painterResource(id = R.drawable.sigma),
+            painterResource(id = R.drawable.photon),
+            painterResource(id = R.drawable.momentum),
+            painterResource(id = R.drawable.nucleus))
+    )
     val list = listOf(
         painterResource(id = R.drawable.momentum),
         painterResource(id = R.drawable.photon),
@@ -152,7 +173,7 @@ fun CardPoint(answer: String, options: List<String>,questionState:QuestionStateM
         painterResource(id = R.drawable.nucleus))
     LazyColumn{
         items(count = options.count()){ item->
-            CardHOC(options[item], flag = flag.value, answer, image = list[item],questionState){
+            CardHOC(options[item], flag = flag.value, answer, image = liatnew[questionState.state.value][item],questionState){
                 callBack(it)
             }
         }

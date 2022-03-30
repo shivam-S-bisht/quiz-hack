@@ -11,9 +11,12 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import com.airbnb.lottie.compose.*
 import com.example.composothon.ui.theme.ComposoThonTheme
 
 class ResultsActivity : ComponentActivity() {
@@ -28,8 +31,9 @@ class ResultsActivity : ComponentActivity() {
                 ) {
                     val painter = painterResource(id = R.drawable.vaibhav)
                     Box(modifier = Modifier
-//                        .fillMaxSize()
-//                        .background(Color.Black)
+                        .fillMaxSize()
+                        .background(Color.Black),
+                        contentAlignment = Alignment.Center
                     ){
                         ResultsGreeting(name = "10points")
                     }
@@ -41,5 +45,15 @@ class ResultsActivity : ComponentActivity() {
 
 @Composable
 fun ResultsGreeting(name: String) {
-    Text(text = "Result Screen ----- Points: $name!")
+    PlayLottieAnim(spec = LottieCompositionSpec.RawRes(R.raw.gameover))
+}
+
+@Composable
+fun PlayLottieAnim(spec: LottieCompositionSpec){
+    val composition by rememberLottieComposition(spec)
+    val progress by animateLottieCompositionAsState(composition)
+    val compositionResult: LottieCompositionResult = rememberLottieComposition(spec = spec)
+    LottieAnimation(
+        composition = composition,
+        progress = progress)
 }
