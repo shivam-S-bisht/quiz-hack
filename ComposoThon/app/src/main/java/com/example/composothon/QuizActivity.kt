@@ -1,6 +1,8 @@
 package com.example.composothon
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
+import android.media.Image
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
@@ -31,30 +33,68 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 class QuizActivity : ComponentActivity() {
     private val questionStateModel: QuestionStateModel by viewModels();
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-
+            var objOfSquad = listOf(
+                mapOf(
+                    "squad" to "Sigma",
+                    "name" to "Vaibhav",
+                    "image" to painterResource(id = R.drawable.vaibhav) ,
+                    "options" to listOf("Momentum", "Photon", "Sigma","Nucleus"),
+                    "logos" to listOf(
+                        painterResource(id = R.drawable.momentum) ,
+                        painterResource(id = R.drawable.photon),
+                        painterResource(id = R.drawable.sigma),
+                        painterResource(id = R.drawable.nucleus))
+                ),
+                mapOf(
+                    "squad" to "Momentum",
+                    "name" to "Abhilash",
+                    "image" to painterResource(id = R.drawable.abhilash) ,
+                    "options" to listOf("Photon", "Momentum", "Sigma","Nucleus"),
+                    "logos" to listOf(
+                        painterResource(id = R.drawable.photon) ,
+                        painterResource(id = R.drawable.momentum),
+                        painterResource(id = R.drawable.sigma),
+                        painterResource(id = R.drawable.nucleus)
+                    )
+                ),
+                mapOf(
+                    "squad" to "Photon",
+                    "name" to "Shivam",
+                    "image" to painterResource(id =  R.drawable.shivam),
+                    "options" to listOf("Sigma", "Photon", "Momentum","Nucleus"),
+                    "logos" to listOf(
+                        painterResource(id = R.drawable.sigma) ,
+                        painterResource(id = R.drawable.photon),
+                        painterResource(id = R.drawable.momentum),
+                        painterResource(id = R.drawable.nucleus)
+                    )
+                )
+            )
             ComposoThonTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-
-                    val abc = listOf(
-                        listOf<String>("Momentum", "Photon", "Sigma", "Nucleus","Sigma"),
-                        listOf<String>("Photon", "Momentum", "Sigma", "Nucleus","Photon"),
-                        listOf<String>("Sigma", "Photon", "Momentum", "Nucleus","Momentum"))
-
-                    val options = listOf<String>("Momentum", "Photon", "Sigma", "Nucleus")
                     var quesState = questionStateModel.state.collectAsState()
                     var scoreState = remember {
                         mutableStateOf(0)
                     }
                     if(quesState.value < 3){
-                        QuestionPoint(Question(type = "names", abc[quesState.value].last(), options = abc[quesState.value]), state = "", questionStateModel){
+                        QuestionPoint(
+                            Question(
+                                type = "names",
+                                answer= objOfSquad[quesState.value]["squad"].toString(),
+                                options = objOfSquad[quesState.value]["options"] as List<String>,
+                                squadLogos = objOfSquad[quesState.value]["logos"] as List<Painter>,
+                                logoImage = objOfSquad[quesState.value]["image"]  as Painter,
+                                name = objOfSquad[quesState.value]["name"] as String
+                                ), state = "", questionStateModel){
                             if(it){
                                 scoreState.value +=10
                             }
@@ -67,8 +107,6 @@ class QuizActivity : ComponentActivity() {
                     }
                 }
             }
-
-
         }
     }
 }
@@ -77,6 +115,9 @@ data class Question(
     var type: String,
     var answer: String,
     var options: List<String>,
+    var logoImage:Painter,
+    var squadLogos: List<Painter>,
+    var name:String
 )
 
 data class QuestionState(
@@ -106,12 +147,6 @@ fun LogoDesign(painter:Painter){
 
 @Composable
 fun QuestionPoint(question: Question, state: String, questionState: QuestionStateModel,callBack: (Boolean) -> Unit){
-    val listOfDP = listOf(
-        painterResource(id = R.drawable.vaibhav),
-        painterResource(id = R.drawable.abhilash),
-        painterResource(id = R.drawable.shivam),
-    )
-    val painter = painterResource(id = R.drawable.vaibhav)
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
@@ -123,8 +158,8 @@ fun QuestionPoint(question: Question, state: String, questionState: QuestionStat
             scaffoldState = scaffoldState
         ) {
         Column(modifier = Modifier.background(Color.Black)) {
-            LogoDesign(painter = listOfDP[questionState.state.value])
-            CardPoint(question.answer, question.options, questionState) {
+            LogoDesign(painter =  question.logoImage)
+            CardPoint(question.answer, question.options, questionState,question) {
                 if(it){
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar(
@@ -145,50 +180,18 @@ fun QuestionPoint(question: Question, state: String, questionState: QuestionStat
             }
         }
     }
-//        if(successState.value == "true"){
-//            PlayLottie(LottieCompositionSpec.RawRes(R.raw.correct), questionState){
-//                successState.value = ""
-//            }
-//            return
-//        } else if (successState.value == "false"){
-//            PlayLottie(LottieCompositionSpec.RawRes(R.raw.wrong), questionState){
-//                successState.value = ""
-//            }
-//        }
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CardPoint(answer: String, options: List<String>,questionState:QuestionStateModel,callBack: (Boolean) -> Unit){
+fun CardPoint(answer: String, options: List<String>,questionState:QuestionStateModel,question: Question,callBack: (Boolean) -> Unit){
     val flag = remember {
         mutableStateOf(value = false)
     }
-    val liatnew = listOf(
-        listOf(
-            painterResource(id = R.drawable.momentum),
-            painterResource(id = R.drawable.photon),
-            painterResource(id = R.drawable.sigma),
-            painterResource(id = R.drawable.nucleus)),
-        listOf(
-            painterResource(id = R.drawable.photon),
-            painterResource(id = R.drawable.momentum),
-            painterResource(id = R.drawable.sigma),
-            painterResource(id = R.drawable.nucleus)),
-        listOf(
-            painterResource(id = R.drawable.sigma),
-            painterResource(id = R.drawable.photon),
-            painterResource(id = R.drawable.momentum),
-            painterResource(id = R.drawable.nucleus))
-    )
-    val list = listOf(
-        painterResource(id = R.drawable.momentum),
-        painterResource(id = R.drawable.photon),
-        painterResource(id = R.drawable.sigma),
-        painterResource(id = R.drawable.nucleus))
     LazyColumn{
         items(count = options.count()){ item->
-            CardHOC(options[item], flag = flag.value, answer, image = liatnew[questionState.state.value][item],questionState){
+            CardHOC(options[item], flag = flag.value, answer, image = question.squadLogos[item],questionState){
                 callBack(it)
             }
         }

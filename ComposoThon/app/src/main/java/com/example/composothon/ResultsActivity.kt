@@ -3,6 +3,8 @@ package com.example.composothon
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.LottieDrawable
 import com.airbnb.lottie.compose.*
 import com.example.composothon.ui.theme.ComposoThonTheme
 
@@ -47,7 +50,7 @@ class ResultsActivity : ComponentActivity() {
 
                                 fontSize = 40.sp,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.paddingFromBaseline(top = 30.dp)
+                                modifier = Modifier.paddingFromBaseline(top = 70.dp)
                             )
                         }
                     }
@@ -66,8 +69,9 @@ fun ResultsGreeting(name: String) {
 fun PlayLottieAnim(spec: LottieCompositionSpec){
     val composition by rememberLottieComposition(spec)
     val progress by animateLottieCompositionAsState(composition)
-    val compositionResult: LottieCompositionResult = rememberLottieComposition(spec = spec)
+
     LottieAnimation(
         composition = composition,
-        progress = progress)
+        progress = progress,
+    )
 }

@@ -36,20 +36,18 @@ class SplashActivity : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
+            val mp: MediaPlayer = MediaPlayer.create(LocalContext.current,R.raw.ipl)
             ComposoThonTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    mp.start()
                     Box(modifier = Modifier
                         .fillMaxSize()
                         .background(Color.Black),
                         contentAlignment = Alignment.Center
                     ){
-                        val context = LocalContext.current
-                        val mp: MediaPlayer = MediaPlayer.create(context,R.raw.ipl)
-                        mp.start()
                         PlayLottieSplash(LottieCompositionSpec.RawRes(R.raw.splash))
                     }
                 }
