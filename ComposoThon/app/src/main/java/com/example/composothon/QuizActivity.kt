@@ -35,7 +35,7 @@ class QuizActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val successState = remember {
-                        mutableStateOf(false)
+                        mutableStateOf("")
                     }
                     val teams = listOf<String>("Momentum", "Photon", "Sigma", "Nucleus")
                     val answer = "Sigma";
@@ -51,9 +51,10 @@ class QuizActivity : ComponentActivity() {
                                    successState.value = it
                                }
                            }
-                       if(successState.value){
+                       if(successState.value == "true"){
                            PlayLottie(LottieCompositionSpec.RawRes(R.raw.correct))
-                       } else{
+                       } else if (successState.value == "false"){
+                           PlayLottie(LottieCompositionSpec.RawRes(R.raw.wrong))
                        }
                     }
                 }
@@ -97,7 +98,7 @@ fun successDesign(painter: Painter){
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CardPoint(answer: String, teams: List<String>, correct:(Boolean)->Unit){
+fun CardPoint(answer: String, teams: List<String>, correct:(String)->Unit){
     val flag = remember {
         mutableStateOf(value = false)
     }
@@ -110,7 +111,7 @@ fun CardPoint(answer: String, teams: List<String>, correct:(Boolean)->Unit){
         items(count = teams.count()){ item->
             CardHOC(teams[item],flag = flag.value, answer,image = list[item]){
                 flag.value = it.event
-                correct(it.correct)
+                correct(it.correct.toString())
                 }
         }
     }
