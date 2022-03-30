@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,12 +22,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import com.airbnb.lottie.compose.*
 import com.example.composothon.ui.theme.ComposoThonTheme
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 class QuizActivity : ComponentActivity() {
+    private val questionStateModel: QuestionStateModel by viewModels();
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             ComposoThonTheme {
                 // A surface container using the 'background' color from the theme
@@ -34,26 +40,44 @@ class QuizActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    val abc = listOf(
+                        listOf<String>("Momentum", "Photon", "Sigma", "Nucleus"),
+                        listOf<String>("Photon", "Momentum", "Sigma", "Nucleus"),
+                        listOf<String>("Sigma", "Photon", "Momentum", "Nucleus"))
 
                     val options = listOf<String>("Momentum", "Photon", "Sigma", "Nucleus")
                     val answer = "Sigma";
-                    QuestionPoint(Question(type = "names", answer, options))
+
+                    var quesState = questionStateModel.state.collectAsState()
+
+                    if(quesState.value < 3){
+                        QuestionPoint(Question(type = "names", answer, options = abc[quesState.value]), state = "", questionStateModel)
+                    } else{
+                        val context = LocalContext.current
+                        context.startActivity(Intent(context, ResultsActivity::class.java))
+                    }
+
                 }
             }
         }
     }
 }
 
-data class AnswerValue(
-    var event: Boolean,
-    var correct: Boolean,
-)
-
 data class Question(
     var type: String,
     var answer: String,
     var options: List<String>,
 )
+
+data class QuestionState(
+    var state: Int
+
+)
+
+class QuestionStateModel : ViewModel() {
+    var state = MutableStateFlow(0);
+    var successState = MutableStateFlow("");
+}
 
 
 @Composable
@@ -71,32 +95,53 @@ fun LogoDesign(painter:Painter){
 }
 
 @Composable
-fun QuestionPoint(question: Question){
-    val successState = remember {
-        mutableStateOf("")
-    }
+fun QuestionPoint(question: Question, state: String, questionState: QuestionStateModel){
     val painter = painterResource(id = R.drawable.vaibhav)
+    val scaffoldState = rememberScaffoldState()
+    val scope = rememberCoroutineScope()
+
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color.Black)
-    ){
-        Column {
-            LogoDesign(painter = painter )
-            CardPoint(question.answer, question.options){
-                successState.value = it
+    ) {
+        Scaffold(
+            scaffoldState = scaffoldState
+        ) {
+        Column(modifier = Modifier.background(Color.Black)) {
+            LogoDesign(painter = painter)
+            CardPoint(question.answer, question.options, questionState) {
+                if(it){
+                    scope.launch {
+                        scaffoldState.snackbarHostState.showSnackbar(
+                            message = "correct",)
+                    }
+                } else{
+                    scope.launch {
+                        scaffoldState.snackbarHostState.showSnackbar(
+                            message = "wrong",)
+                    }
+                }
+
+                questionState.state.value += 1
             }
         }
-        if(successState.value == "true"){
-            PlayLottie(LottieCompositionSpec.RawRes(R.raw.correct))
-        } else if (successState.value == "false"){
-            PlayLottie(LottieCompositionSpec.RawRes(R.raw.wrong))
-        }
+    }
+//        if(successState.value == "true"){
+//            PlayLottie(LottieCompositionSpec.RawRes(R.raw.correct), questionState){
+//                successState.value = ""
+//            }
+//            return
+//        } else if (successState.value == "false"){
+//            PlayLottie(LottieCompositionSpec.RawRes(R.raw.wrong), questionState){
+//                successState.value = ""
+//            }
+//        }
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CardPoint(answer: String, options: List<String>, correct:(String)->Unit){
+fun CardPoint(answer: String, options: List<String>,questionState:QuestionStateModel,callBack: (Boolean) -> Unit){
     val flag = remember {
         mutableStateOf(value = false)
     }
@@ -107,20 +152,18 @@ fun CardPoint(answer: String, options: List<String>, correct:(String)->Unit){
         painterResource(id = R.drawable.nucleus))
     LazyColumn{
         items(count = options.count()){ item->
-            CardHOC(options[item],flag = flag.value, answer,image = list[item]){
-                flag.value = it.event
-                correct(it.correct.toString())
-                }
+            CardHOC(options[item], flag = flag.value, answer, image = list[item],questionState){
+                callBack(it)
+            }
         }
     }
 }
 
 @Composable
-fun CardHOC(text: String, flag: Boolean, answer: String,image:Painter, event:(AnswerValue)->Unit) {
+fun CardHOC(text: String, flag: Boolean, answer: String, image:Painter,questionState:QuestionStateModel,callBack:(Boolean)->Unit) {
     val checkAnsState = remember {
         mutableStateOf(value = Color.White)
     }
-
     Card(modifier = Modifier
         .background(Color.Black)
         .padding(10.dp)
@@ -128,11 +171,9 @@ fun CardHOC(text: String, flag: Boolean, answer: String,image:Painter, event:(An
         .clickable(enabled = !flag) {
             if (!flag) {
                 if (text == answer) {
-                    checkAnsState.value = Color.Green
-                    event(AnswerValue(event = true, correct = true))
+                    callBack(true)
                 } else {
-                    checkAnsState.value = Color.Red
-                    event(AnswerValue(event = true, correct = false))
+                callBack(false)
                 }
             }
         },
@@ -168,7 +209,7 @@ fun CardHOC(text: String, flag: Boolean, answer: String,image:Painter, event:(An
 }
 
 @Composable
-fun PlayLottie(spec:LottieCompositionSpec){
+fun PlayLottie(spec:LottieCompositionSpec, questionState: QuestionStateModel, event:()->Unit){
     val composition by rememberLottieComposition(spec)
     val progress by animateLottieCompositionAsState(composition)
     val compositionResult: LottieCompositionResult = rememberLottieComposition(spec = spec)
@@ -177,9 +218,9 @@ fun PlayLottie(spec:LottieCompositionSpec){
         progress = progress)
     var x = compositionResult
     if(compositionResult.isComplete){
-        val context = LocalContext.current
-        context.startActivity(Intent(context, QuizActivity::class.java))
+        event();
+        questionState.state.value += 1;
         return
-    } else if(compositionResult.isFailure){
     }
+    event();
 }
