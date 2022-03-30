@@ -114,6 +114,7 @@ class QuizActivity : ComponentActivity() {
                 )
             ).toMutableList()
             val shuffAlp = objOfSquad.shuffled()
+            
             ComposoThonTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -133,7 +134,7 @@ class QuizActivity : ComponentActivity() {
                                 squadLogos = shuffAlp[quesState.value]["logos"] as List<Painter>,
                                 logoImage = shuffAlp[quesState.value]["image"]  as Painter,
                                 name = shuffAlp[quesState.value]["name"] as String
-                                ), state = "", questionStateModel){
+                                ), questionStateModel){
                             if(it){
                                 scoreState.value +=10
                             }
@@ -151,22 +152,8 @@ class QuizActivity : ComponentActivity() {
     }
 }
 
-data class Question(
-    var type: String,
-    var answer: String,
-    var options: List<String>,
-    var logoImage:Painter,
-    var squadLogos: List<Painter>,
-    var name:String
-)
-
-data class QuestionState(
-    var state: Int
-)
-
 class QuestionStateModel : ViewModel() {
     var state = MutableStateFlow(0);
-    var successState = MutableStateFlow("");
 }
 
 
@@ -185,7 +172,7 @@ fun LogoDesign(painter:Painter){
 }
 
 @Composable
-fun QuestionPoint(question: Question, state: String, questionState: QuestionStateModel,callBack: (Boolean) -> Unit){
+fun QuestionPoint(question: Question, questionState: QuestionStateModel,callBack: (Boolean) -> Unit){
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
@@ -198,7 +185,7 @@ fun QuestionPoint(question: Question, state: String, questionState: QuestionStat
         ) {
         Column(modifier = Modifier.background(Color.Black)) {
             LogoDesign(painter =  question.logoImage)
-            CardPoint(question.answer, question.options, questionState,question) {
+            CardPoint(question) {
                 if(it){
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar(
@@ -224,22 +211,23 @@ fun QuestionPoint(question: Question, state: String, questionState: QuestionStat
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CardPoint(answer: String, options: List<String>,questionState:QuestionStateModel,question: Question,callBack: (Boolean) -> Unit){
-    val flag = remember {
+fun CardPoint(question: Question,callBack: (Boolean) -> Unit){
+    val flag = remember(key1 = question.name) {
         mutableStateOf(value = false)
     }
     LazyColumn{
-        items(count = options.count()){ item->
-            CardHOC(options[item], flag = flag.value, answer, image = question.squadLogos[item],questionState){
+        items(count = question.options.count()){ item->
+            CardHOC(question.name, question.options[item], flag = flag.value, question.answer, image = question.squadLogos[item]){
                 callBack(it)
+                flag.value = true;
             }
         }
     }
 }
 
 @Composable
-fun CardHOC(text: String, flag: Boolean, answer: String, image:Painter,questionState:QuestionStateModel,callBack:(Boolean)->Unit) {
-    val checkAnsState = remember {
+fun CardHOC(name: String, text: String, flag: Boolean, answer: String, image: Painter, callBack:(Boolean)->Unit) {
+    val checkAnsState = remember(key1 = name, key2 = text) {
         mutableStateOf(value = Color.White)
     }
     Card(modifier = Modifier
@@ -250,8 +238,10 @@ fun CardHOC(text: String, flag: Boolean, answer: String, image:Painter,questionS
             if (!flag) {
                 if (text == answer) {
                     callBack(true)
+                    checkAnsState.value = Color.Green;
                 } else {
                     callBack(false)
+                    checkAnsState.value = Color.Red;
                 }
             }
         },
