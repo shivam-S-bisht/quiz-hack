@@ -301,5 +301,4 @@ fun PlayLottie(spec:LottieCompositionSpec, questionState: QuestionStateModel, ev
         questionState.state.value += 1;
         return
     }
-    event();
 }
