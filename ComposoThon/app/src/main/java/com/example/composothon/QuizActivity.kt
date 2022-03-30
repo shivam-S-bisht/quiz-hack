@@ -50,15 +50,16 @@ class QuizActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(Color.Black)
                     ){
-                       if(!successState.value){
+
                            Column {
                                LogoDesign(painter = painter )
                                CardPoint(answer, teams){
-                                   successState.value = true
+                                   successState.value = it
                                }
                            }
-                       } else {
-                           PlayLottie()
+                       if(successState.value){
+                           PlayLottie(LottieCompositionSpec.RawRes(R.raw.correct))
+                       } else{
                        }
                     }
                 }
@@ -169,16 +170,17 @@ fun CardHOC(text: String, flag: Boolean, answer: String,image:Painter ,event:(Bo
 }
 
 @Composable
-fun PlayLottie(){
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.correct))
+fun PlayLottie(spec:LottieCompositionSpec){
+    val composition by rememberLottieComposition(spec)
     val progress by animateLottieCompositionAsState(composition)
     val compositionResult: LottieCompositionResult = rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.correct))
-    LottieAnimation(composition = composition, progress = progress)
+    LottieAnimation(
+        composition = composition,
+        progress = progress)
     var x = compositionResult
     if(compositionResult.isComplete){
         val context = LocalContext.current
         context.startActivity(Intent(context, MainActivity::class.java))
-        Log.i("csknsdnf","ksmfknsf")
         return
     } else if(compositionResult.isFailure){
     }
