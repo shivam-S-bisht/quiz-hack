@@ -1,6 +1,7 @@
 package com.example.composothon
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import androidx.activity.ComponentActivity
@@ -34,12 +35,14 @@ class QuizActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+
             ComposoThonTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+
                     val abc = listOf(
                         listOf<String>("Momentum", "Photon", "Sigma", "Nucleus","Sigma"),
                         listOf<String>("Photon", "Momentum", "Sigma", "Nucleus","Photon"),
@@ -64,6 +67,8 @@ class QuizActivity : ComponentActivity() {
                     }
                 }
             }
+
+
         }
     }
 }

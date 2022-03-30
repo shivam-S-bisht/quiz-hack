@@ -1,7 +1,9 @@
 package com.example.composothon
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,6 +36,7 @@ class SplashActivity : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
             ComposoThonTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -44,6 +47,9 @@ class SplashActivity : ComponentActivity(){
                         .background(Color.Black),
                         contentAlignment = Alignment.Center
                     ){
+                        val context = LocalContext.current
+                        val mp: MediaPlayer = MediaPlayer.create(context,R.raw.ipl)
+                        mp.start()
                         PlayLottieSplash(LottieCompositionSpec.RawRes(R.raw.splash))
                     }
                 }
@@ -61,9 +67,11 @@ fun PlayLottieSplash(spec:LottieCompositionSpec){
         composition = composition,
         progress = progress)
     var x = compositionResult
+    val context = LocalContext.current
     if(compositionResult.isComplete){
-        val context = LocalContext.current
-        context.startActivity(Intent(context, StartActivity::class.java))
+        Handler().postDelayed({
+            context.startActivity(Intent(context, StartActivity::class.java))
+        },3000)
         return
     } else if(compositionResult.isFailure){
     }

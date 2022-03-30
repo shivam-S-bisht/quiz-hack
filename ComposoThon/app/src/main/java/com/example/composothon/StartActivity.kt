@@ -1,6 +1,7 @@
 package com.example.composothon
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -53,10 +54,12 @@ class StartActivity : ComponentActivity(){
                             }
 
                         if(flag.value){
+                            val context = LocalContext.current
+                            val mp:MediaPlayer = MediaPlayer.create(context,R.raw.kbc)
+                            mp.start()
                             PlayLottieStart(LottieCompositionSpec.RawRes(R.raw.start))
                         } else{
                         }
-//                        PlayLottieStart(LottieCompositionSpec.RawRes(R.raw.splash))
                     }
                 }
             }
