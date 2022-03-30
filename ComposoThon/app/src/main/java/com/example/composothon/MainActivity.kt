@@ -78,46 +78,63 @@ fun CardPoint(selectedItem:(String)->Unit){
 //        painterResource(id = R.drawable.momentum),
 //        painterResource(id = R.drawable.momentum),
 //        painterResource(id = R.drawable.momentum))
-    val checkAnsState = remember {
-        mutableStateOf(value = Color.White)
-    }
+
     val arr = listOf("Momentum","Photon","Sigma","Nucleus")
+    val value = remember {
+        mutableStateOf(value = false)
+    }
     LazyColumn{
         items(count = arr.count()){ item->
             Row(horizontalArrangement = Arrangement.Center) {
-                Card(modifier = Modifier
-                    .background(Color.Black)
-                    .padding(10.dp)
-                    .clickable {
-                        selectedItem(arr[item])
-                        if(arr[item] == "Sigma"){
-                            checkAnsState.value = Color.Green
-                        } else{
-                            checkAnsState.value = Color.Red
-                        }
-                    },
-                    backgroundColor = checkAnsState.value
-                ){
-                    Text(
-                        text = arr[item].toString(),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .padding(vertical = 24.dp)
-                            .fillMaxWidth()
-                    )
+                CardHOC(arr[item],value = value.value){
+                    value.value = it
                 }
             }
         }
     }
 }
 @Composable
-fun Greeting(s: String) {
+fun Greeting(s: String,) {
 //    Text(text = "Hello $name!")
 }
 
+@Composable
+fun CardHOC(text: String, value: Boolean, event:(Boolean)->Unit) {
+    val checkAnsState = remember {
+        mutableStateOf(value = Color.White)
+    }
+    Card(modifier = Modifier
+        .background(Color.Black)
+        .padding(10.dp)
+        .clickable(enabled = !value) {
+//            selectedItem(text)
+
+            if (!value) {
+                if(text == "Sigma"){
+                    checkAnsState.value = Color.Green
+                } else{
+                    checkAnsState.value = Color.Red
+                }
+                event(true)
+            }
+        },
+
+
+
+        backgroundColor = checkAnsState.value
+    ){
+        Text(
+            text = text,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(vertical = 24.dp)
+                .fillMaxWidth()
+        )
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
