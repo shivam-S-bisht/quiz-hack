@@ -216,7 +216,7 @@ fun QuestionPoint(question: Question, state: String, questionState: QuestionStat
 
                 Handler().postDelayed({
                     questionState.state.value += 1
-                },5000)
+                },3000)
             }
         }
     }
