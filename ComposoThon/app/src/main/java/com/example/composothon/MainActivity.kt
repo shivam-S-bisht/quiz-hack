@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,10 +18,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -73,11 +76,11 @@ fun LogoDesign(painter:Painter){
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CardPoint(selectedItem:(String)->Unit){
-//    val list = listOf(
-//        painterResource(id = R.drawable.momentum),
-//        painterResource(id = R.drawable.momentum),
-//        painterResource(id = R.drawable.momentum),
-//        painterResource(id = R.drawable.momentum))
+    val list = listOf(
+        painterResource(id = R.drawable.momentum),
+        painterResource(id = R.drawable.photon),
+        painterResource(id = R.drawable.sigma),
+        painterResource(id = R.drawable.nucleus))
 
     val arr = listOf("Momentum","Photon","Sigma","Nucleus")
     val value = remember {
@@ -85,11 +88,9 @@ fun CardPoint(selectedItem:(String)->Unit){
     }
     LazyColumn{
         items(count = arr.count()){ item->
-            Row(horizontalArrangement = Arrangement.Center) {
-                CardHOC(arr[item],value = value.value){
+            CardHOC(arr[item],value = value.value,image = list[item]){
                     value.value = it
                 }
-            }
         }
     }
 }
@@ -99,40 +100,50 @@ fun Greeting(s: String,) {
 }
 
 @Composable
-fun CardHOC(text: String, value: Boolean, event:(Boolean)->Unit) {
+fun CardHOC(text: String, value: Boolean,image:Painter, event:(Boolean)->Unit) {
     val checkAnsState = remember {
         mutableStateOf(value = Color.White)
     }
     Card(modifier = Modifier
-        .background(Color.Black)
         .padding(10.dp)
+        .fillMaxWidth()
         .clickable(enabled = !value) {
-//            selectedItem(text)
-
             if (!value) {
-                if(text == "Sigma"){
+                if (text == "Sigma") {
                     checkAnsState.value = Color.Green
-                } else{
+                } else {
                     checkAnsState.value = Color.Red
                 }
                 event(true)
             }
         },
-
-
-
         backgroundColor = checkAnsState.value
     ){
-        Text(
-            text = text,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .padding(vertical = 24.dp)
-                .fillMaxWidth()
-        )
+        Row(horizontalArrangement = Arrangement.Start,verticalAlignment = Alignment.CenterVertically) {
+            Card(
+                elevation = 5.dp,
+                shape = RoundedCornerShape(50.dp),
+                modifier = Modifier
+                    .padding(horizontal = 10.dp)
+                    .width(60.dp)
+                    .height(60.dp)
+            )
+            {
+                Image(
+                    painter = image,
+                    contentDescription = "hello",
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+            Text(
+                text = text,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                modifier = Modifier
+                    .padding(vertical = 24.dp,horizontal = 10.dp)
+            )
+        }
     }
 }
 
