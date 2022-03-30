@@ -173,14 +173,14 @@ fun CardHOC(text: String, flag: Boolean, answer: String,image:Painter, event:(An
 fun PlayLottie(spec:LottieCompositionSpec){
     val composition by rememberLottieComposition(spec)
     val progress by animateLottieCompositionAsState(composition)
-    val compositionResult: LottieCompositionResult = rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.correct))
+    val compositionResult: LottieCompositionResult = rememberLottieComposition(spec = spec)
     LottieAnimation(
         composition = composition,
         progress = progress)
     var x = compositionResult
     if(compositionResult.isComplete){
         val context = LocalContext.current
-        context.startActivity(Intent(context, MainActivity::class.java))
+        context.startActivity(Intent(context, QuizActivity::class.java))
         return
     } else if(compositionResult.isFailure){
     }

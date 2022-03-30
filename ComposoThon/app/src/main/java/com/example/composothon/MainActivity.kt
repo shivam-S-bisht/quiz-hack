@@ -23,22 +23,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val context = LocalContext.current
-                    context.startActivity(Intent(context, QuizActivity::class.java))
+                    context.startActivity(Intent(context, SplashActivity::class.java))
                 }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(s: String,) {
-    Text(text = "Hello $s!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    ComposoThonTheme {
-        Greeting("Name")
-    }
-}
