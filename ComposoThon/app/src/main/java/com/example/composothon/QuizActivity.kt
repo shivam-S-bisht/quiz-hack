@@ -203,13 +203,13 @@ fun QuestionPoint(question: Question, state: String, questionState: QuestionStat
                 if(it){
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar(
-                            message = "correct",)
+                            message = "Correct Answer ",)
                         callBack(true)
                     }
                 } else{
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar(
-                            message = "wrong",)
+                            message = "Wrong Answer",)
                     }
                     callBack(false)
                 }
@@ -301,4 +301,5 @@ fun PlayLottie(spec:LottieCompositionSpec, questionState: QuestionStateModel, ev
         questionState.state.value += 1;
         return
     }
+    event();
 }

@@ -1,6 +1,7 @@
 package com.example.composothon
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -43,11 +44,13 @@ class ResultsActivity : ComponentActivity() {
                 ) {
                     val painter = painterResource(id = R.drawable.vaibhav)
                     val context = LocalContext.current
+                    val mp: MediaPlayer = MediaPlayer.create(context,R.raw.quizend)
                     Box(modifier = Modifier
                         .fillMaxSize()
                         .background(Color.Black),
                         contentAlignment = Alignment.Center
                     ){
+
                         Column (horizontalAlignment = Alignment.CenterHorizontally){
                             ResultsGreeting(name = "10points")
                             Text(text = "Score:  $people / $total",
@@ -68,6 +71,7 @@ class ResultsActivity : ComponentActivity() {
                                 shape = RoundedCornerShape(20.dp),
                                 backgroundColor = Color.Yellow,
                             ){
+                                mp.start()
                                 Text(
                                     text = "Start Quiz",
                                     fontSize = 25.sp,
