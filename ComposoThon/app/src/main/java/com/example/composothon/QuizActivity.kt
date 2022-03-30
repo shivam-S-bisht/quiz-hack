@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,6 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.LottieComposition
+import com.airbnb.lottie.compose.*
 import com.example.composothon.ui.theme.ComposoThonTheme
 
 class QuizActivity : ComponentActivity() {
@@ -108,18 +111,19 @@ fun CardHOC(text: String, flag: Boolean, answer: String,image:Painter ,event:(Bo
     val checkAnsState = remember {
         mutableStateOf(value = Color.White)
     }
+
     Card(modifier = Modifier
         .background(Color.Black)
         .padding(10.dp)
         .fillMaxWidth()
         .clickable(enabled = !flag) {
             if (!flag) {
-                if(text == answer){
+                if (text == answer) {
                     checkAnsState.value = Color.Green
+
                 } else {
                     checkAnsState.value = Color.Red
                 }
-                event(true)
             }
         },
         backgroundColor = checkAnsState.value,
@@ -151,4 +155,11 @@ fun CardHOC(text: String, flag: Boolean, answer: String,image:Painter ,event:(Bo
             )
         }
     }
+}
+
+@Composable
+fun PlayLottie(){
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.correct))
+    val progress by animateLottieCompositionAsState(composition)
+    LottieAnimation(composition = composition, progress = progress)
 }
