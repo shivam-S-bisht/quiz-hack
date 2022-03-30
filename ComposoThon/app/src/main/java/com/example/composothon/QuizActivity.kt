@@ -95,12 +95,10 @@ fun CardPoint(answer: String, teams: List<String>, correct:(Boolean)->Unit){
         painterResource(id = R.drawable.nucleus))
     LazyColumn{
         items(count = teams.count()){ item->
-            Row(horizontalArrangement = Arrangement.Center) {
-                CardHOC(teams[item],flag = flag.value, answer,image = list[item]){
-                    flag.value = it
-                    correct(it)
+            CardHOC(teams[item],flag = flag.value, answer,image = list[item]){
+                flag.value = it
+                correct(it)
                 }
-            }
         }
     }
 }
@@ -124,7 +122,8 @@ fun CardHOC(text: String, flag: Boolean, answer: String,image:Painter ,event:(Bo
                 event(true)
             }
         },
-        backgroundColor = checkAnsState.value
+        backgroundColor = checkAnsState.value,
+        shape = RoundedCornerShape(20.dp)
     ){
         Row(horizontalArrangement = Arrangement.Start,verticalAlignment = Alignment.CenterVertically) {
             Card(
