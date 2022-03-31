@@ -60,6 +60,7 @@ class SplashActivity : ComponentActivity(){
     }
 }
 
+// component to play lottie animation
 @Composable
 fun PlayLottieSplash(spec:LottieCompositionSpec){
     val composition by rememberLottieComposition(spec)

@@ -90,11 +90,13 @@ class ResultsActivity : ComponentActivity() {
     }
 }
 
+// component to show result card
 @Composable
 fun ResultsGreeting(name: String) {
     PlayLottieAnim(spec = LottieCompositionSpec.RawRes(R.raw.gameover))
 }
 
+// component to play lottie animation
 @Composable
 fun PlayLottieAnim(spec: LottieCompositionSpec){
     val composition by rememberLottieComposition(spec)

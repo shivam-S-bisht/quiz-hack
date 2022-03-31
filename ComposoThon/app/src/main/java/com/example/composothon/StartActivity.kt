@@ -73,6 +73,7 @@ class StartActivity : ComponentActivity(){
     }
 }
 
+// component to play lottie animation
 @Composable
 fun PlayLottieStart(spec:LottieCompositionSpec){
     val composition by rememberLottieComposition(spec)
@@ -90,6 +91,7 @@ fun PlayLottieStart(spec:LottieCompositionSpec){
     }
 }
 
+// component to start the quiz
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun StartButton(flag: Boolean, callback:(Boolean)->Unit){
@@ -117,10 +119,8 @@ Box(
             fontWeight = FontWeight.Bold,
             color = Color.Black,
             textAlign = TextAlign.Center
-
         )
     }
 }
-
 }
 

@@ -33,10 +33,8 @@ import java.util.*
 
 class QuizActivity : ComponentActivity() {
     private val questionStateModel: QuestionStateModel by viewModels();
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             var objOfSquad = listOf(
                 mapOf(
@@ -144,11 +142,12 @@ class QuizActivity : ComponentActivity() {
     }
 }
 
+// Model
 class QuestionStateModel : ViewModel() {
     var state = MutableStateFlow(0);
 }
 
-
+// component of Logo image which shows the employee image and user has to identify the squad name of the person
 @Composable
 fun LogoDesign(painter:Painter){
     Card(
@@ -163,6 +162,8 @@ fun LogoDesign(painter:Painter){
     }
 }
 
+//component to show list of options . User has to select the correct options
+// Correct answer will be labeled as green and incorrect with red
 @Composable
 fun QuestionPoint(question: Question, questionState: QuestionStateModel, scoreState: ScoreViewModel){
     val scaffoldState = rememberScaffoldState()
@@ -189,7 +190,6 @@ fun QuestionPoint(question: Question, questionState: QuestionStateModel, scoreSt
                             message = "Wrong Answer",)
                     }
                 }
-
                 Handler().postDelayed({
                     questionState.state.value += 1
                 },3000)
@@ -199,6 +199,7 @@ fun QuestionPoint(question: Question, questionState: QuestionStateModel, scoreSt
     }
 }
 
+// component of card contains optionns
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CardPoint(question: Question, scoreState: ScoreViewModel, callBack: (Boolean) -> Unit){
@@ -215,6 +216,7 @@ fun CardPoint(question: Question, scoreState: ScoreViewModel, callBack: (Boolean
     }
 }
 
+//component of subcard contains image of squad and squad name
 @Composable
 fun CardHOC(name: String, text: String, flag: Boolean, answer: String, image: Painter, scoreState: ScoreViewModel, callBack:(Boolean)->Unit) {
     val checkAnsState = remember(key1 = name, key2 = text) {
