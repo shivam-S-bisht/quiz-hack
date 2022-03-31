@@ -49,6 +49,10 @@ class SplashActivity : ComponentActivity(){
                         contentAlignment = Alignment.Center
                     ){
                         PlayLottieSplash(LottieCompositionSpec.RawRes(R.raw.splash))
+                        val context = LocalContext.current
+                        Handler().postDelayed({
+                            context.startActivity(Intent(context, StartActivity::class.java))
+                        },3000)
                     }
                 }
             }
@@ -65,11 +69,8 @@ fun PlayLottieSplash(spec:LottieCompositionSpec){
         composition = composition,
         progress = progress)
     var x = compositionResult
-    val context = LocalContext.current
     if(compositionResult.isComplete){
-        Handler().postDelayed({
-            context.startActivity(Intent(context, StartActivity::class.java))
-        },3000)
+
         return
     } else if(compositionResult.isFailure){
     }

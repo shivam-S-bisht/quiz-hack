@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -49,6 +50,13 @@ class StartActivity : ComponentActivity(){
                         contentAlignment = Alignment.Center
 
                     ){
+                        Text(text = "Welcome To Squad Games",
+                            color = Color.Cyan,
+                            fontSize = 50.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            textAlign = TextAlign.Center,
+                            fontFamily = FontFamily.Cursive
+                        )
                             StartButton(flag=flag.value) {
                                 flag.value = it
                             }
@@ -58,7 +66,6 @@ class StartActivity : ComponentActivity(){
                             val mp:MediaPlayer = MediaPlayer.create(context,R.raw.kbc)
                             mp.start()
                             PlayLottieStart(LottieCompositionSpec.RawRes(R.raw.start))
-                        } else{
                         }
                     }
                 }
