@@ -23,7 +23,5 @@ data class SquadData(
 )
 
 class ScoreViewModel : ViewModel() {
-    var score = 0
+    var value = 0
 }
-
-class PeopleViewModel

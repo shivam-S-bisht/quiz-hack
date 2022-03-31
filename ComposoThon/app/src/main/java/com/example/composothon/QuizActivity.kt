@@ -1,9 +1,6 @@
 package com.example.composothon
 
 import android.content.Intent
-import android.graphics.drawable.Drawable
-import android.media.Image
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import androidx.activity.ComponentActivity
@@ -27,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.compose.*
 import com.example.composothon.ui.theme.ComposoThonTheme
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -114,7 +112,7 @@ class QuizActivity : ComponentActivity() {
                 )
             ).toMutableList()
             val shuffAlp = objOfSquad.shuffled()
-            
+
             ComposoThonTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -122,9 +120,7 @@ class QuizActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     var quesState = questionStateModel.state.collectAsState()
-                    var scoreState = remember {
-                        mutableStateOf(0)
-                    }
+                    var scoreState = ViewModelProvider(this).get(ScoreViewModel::class.java)
                     if(quesState.value < shuffAlp.count()){
                         QuestionPoint(
                             Question(
@@ -134,12 +130,8 @@ class QuizActivity : ComponentActivity() {
                                 squadLogos = shuffAlp[quesState.value]["logos"] as List<Painter>,
                                 logoImage = shuffAlp[quesState.value]["image"]  as Painter,
                                 name = shuffAlp[quesState.value]["name"] as String
-                                ), questionStateModel){
-                            if(it){
-                                scoreState.value +=10
-                            }
-                        }
-                    } else{
+                                ), questionStateModel, scoreState)
+                    } else {
                         val context = LocalContext.current
                             context.startActivity(Intent(context, ResultsActivity::class.java).apply {
                                 putExtra("score","${scoreState.value}")
@@ -172,7 +164,7 @@ fun LogoDesign(painter:Painter){
 }
 
 @Composable
-fun QuestionPoint(question: Question, questionState: QuestionStateModel,callBack: (Boolean) -> Unit){
+fun QuestionPoint(question: Question, questionState: QuestionStateModel, scoreState: ScoreViewModel){
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
@@ -185,19 +177,17 @@ fun QuestionPoint(question: Question, questionState: QuestionStateModel,callBack
         ) {
         Column(modifier = Modifier.background(Color.Black)) {
             LogoDesign(painter =  question.logoImage)
-            CardPoint(question) {
+            CardPoint(question, scoreState) {
                 if(it){
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar(
                             message = "Correct Answer ",)
-                        callBack(true)
                     }
                 } else{
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar(
                             message = "Wrong Answer",)
                     }
-                    callBack(false)
                 }
 
                 Handler().postDelayed({
@@ -211,13 +201,13 @@ fun QuestionPoint(question: Question, questionState: QuestionStateModel,callBack
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CardPoint(question: Question,callBack: (Boolean) -> Unit){
+fun CardPoint(question: Question, scoreState: ScoreViewModel, callBack: (Boolean) -> Unit){
     val flag = remember(key1 = question.name) {
         mutableStateOf(value = false)
     }
     LazyColumn{
         items(count = question.options.count()){ item->
-            CardHOC(question.name, question.options[item], flag = flag.value, question.answer, image = question.squadLogos[item]){
+            CardHOC(question.name, question.options[item], flag = flag.value, question.answer, image = question.squadLogos[item], scoreState){
                 callBack(it)
                 flag.value = true;
             }
@@ -226,7 +216,7 @@ fun CardPoint(question: Question,callBack: (Boolean) -> Unit){
 }
 
 @Composable
-fun CardHOC(name: String, text: String, flag: Boolean, answer: String, image: Painter, callBack:(Boolean)->Unit) {
+fun CardHOC(name: String, text: String, flag: Boolean, answer: String, image: Painter, scoreState: ScoreViewModel, callBack:(Boolean)->Unit) {
     val checkAnsState = remember(key1 = name, key2 = text) {
         mutableStateOf(value = Color.White)
     }
@@ -239,6 +229,7 @@ fun CardHOC(name: String, text: String, flag: Boolean, answer: String, image: Pa
                 if (text == answer) {
                     callBack(true)
                     checkAnsState.value = Color.Green;
+                    scoreState.value +=10
                 } else {
                     callBack(false)
                     checkAnsState.value = Color.Red;
