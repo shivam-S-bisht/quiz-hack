@@ -60,12 +60,11 @@ class StartActivity : ComponentActivity(){
                             StartButton(flag=flag.value) {
                                 flag.value = it
                             }
-
                         if(flag.value){
+                            PlayLottieStart(LottieCompositionSpec.RawRes(R.raw.start))
                             val context = LocalContext.current
                             val mp:MediaPlayer = MediaPlayer.create(context,R.raw.kbc)
                             mp.start()
-                            PlayLottieStart(LottieCompositionSpec.RawRes(R.raw.start))
                         }
                     }
                 }

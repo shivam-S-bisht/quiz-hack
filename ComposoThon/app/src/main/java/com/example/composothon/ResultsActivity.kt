@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.LottieDrawable
+import com.airbnb.lottie.RenderMode
 import com.airbnb.lottie.compose.*
 import com.example.composothon.ui.theme.ComposoThonTheme
 
@@ -98,7 +99,6 @@ fun ResultsGreeting(name: String) {
 fun PlayLottieAnim(spec: LottieCompositionSpec){
     val composition by rememberLottieComposition(spec)
     val progress by animateLottieCompositionAsState(composition)
-
     LottieAnimation(
         composition = composition,
         progress = progress,
